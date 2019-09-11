@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Andrei Efremov](https://up.htmlacademy.ru/javascript/18/user/570505).
-* Наставник: [Андрей Столпнер]  (https://htmlacademy.ru/profile/stolpnera).
+* Наставник: [Andrei Stolpner]  (https://htmlacademy.ru/profile/stolpnera).
 
 ---
 

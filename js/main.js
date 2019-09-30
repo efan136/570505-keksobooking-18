@@ -1,7 +1,9 @@
-'use strict'
+'use strict';
+
 var getRandomNumber = function (minNumber, maxNumber) {
   return Math.floor(minNumber + Math.random() * (maxNumber - minNumber));
 };
+
 var accomodation = ['palace', 'flat', 'house', 'bungalo'];
 
 var checkinTimes = ['12:00', '13:00', '14:00'];
@@ -17,9 +19,9 @@ var photosArray = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel5.jpg'
 ];
 
-var createIncomeArray = function () {
-  var incomeArray = [];
-  for(var i = 1; i <=8; i++){
+var getAccomodationData = function () {
+  var accomodationData = [];
+  for (var i = 1; i <= 8; i++) {
     var location = {'x' : 600, 'y' : 300};
     var incomeObject = {
       'author': {
@@ -28,7 +30,7 @@ var createIncomeArray = function () {
 
       'offer': {
         'title': 'заголовок 0' + i,
-        'address': 'location.x, location.y}}',
+
         'price': 400,
         'type': accomodation[getRandomNumber(1, 5)],
         'rooms': getRandomNumber(0, 4),
@@ -41,32 +43,35 @@ var createIncomeArray = function () {
       },
 
       'location': {
-        'x': getRandomNumber(0, 200),
+        'x': getRandomNumber(150, 800),
         'y': getRandomNumber(130, 630),
       }
     }
-    incomeArray.push(incomeObject);
+    accomodationData.push(incomeObject);
   }
 
-  return incomeArray
+  return accomodationData
 }
 
-createIncomeArray();
+var allAccomodations = getAccomodationData();
 
 var map = document.querySelector('.map');
 map.classList.remove('map--faded');
 
 var mapPins = document.querySelector('.map__pins');
 var fragment = document.createDocumentFragment();
-for (var i = 0; i <= createIncomeArray().length - 1; i++) {
+for (var i = 0; i <= allAccomodations.length - 1; i++) {
   var mapPin = document.createElement('button');
-  mapPin.setAttribute('type', 'button');
+  mapPin.type = 'button';
   mapPin.className = 'map__pin';
-  mapPin.style.left = createIncomeArray()[i].location.x;
-  mapPin.style.top = createIncomeArray()[i].location.y;
+  mapPin.style.left = allAccomodations[i].location.x + 'px';
+  mapPin.style.top = allAccomodations[i].location.y + 'px';
   var mapPinImg = document.createElement('img');
-  mapPinImg.alt = createIncomeArray()[i].offer.title;
-  mapPinImg.src = createIncomeArray()[i].offer.photos;
+  mapPinImg.src = allAccomodations[i].author.avatar;
+  mapPinImg.alt = allAccomodations[i].offer.title;
+  mapPinImg.width = '40';
+  mapPinImg.height = '40';
+
   mapPin.appendChild(mapPinImg);
 
   fragment.appendChild(mapPin);

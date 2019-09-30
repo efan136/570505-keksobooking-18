@@ -1,9 +1,5 @@
 'use strict';
 
-var getRandomNumber = function (minNumber, maxNumber) {
-  return Math.floor(minNumber + Math.random() * (maxNumber - minNumber));
-};
-
 var accomodation = ['palace', 'flat', 'house', 'bungalo'];
 
 var checkinTimes = ['12:00', '13:00', '14:00'];
@@ -19,39 +15,54 @@ var photosArray = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel5.jpg'
 ];
 
+var accomodationPrice = 400;
+var accomodationDescription = 'описание';
+var offerTitle = 'заголовок 0';
+var adressLocation = {'x': 600, 'y': 350};
+
+var getRandomNumber = function (minNumber, maxNumber) {
+  return Math.floor(minNumber + Math.random() * (maxNumber - minNumber));
+};
+
+var getRandomArrayElement = function (arr, minIndex, maxIndex) {
+  return arr[Math.floor(minIndex + Math.random() * (maxIndex - minIndex))];
+};
+
+var sliceArrayRandom = function (arr) {
+  return arr.slice(1, getRandomNumber(2, arr.length));
+};
+
 var getAccomodationData = function () {
   var accomodationData = [];
   for (var i = 1; i <= 8; i++) {
-    var location = {'x' : 600, 'y' : 300};
     var incomeObject = {
       'author': {
         'avatar': 'img/avatars/user0' + i + '.png'
-       },
+      },
 
       'offer': {
-        'title': 'заголовок 0' + i,
-
-        'price': 400,
-        'type': accomodation[getRandomNumber(1, 5)],
-        'rooms': getRandomNumber(0, 4),
-        'guests': getRandomNumber(0, 6),
-        'checkin': checkinTimes[getRandomNumber(0, 3)],
-        'checkout': checkoutTimes[getRandomNumber(0, 3)],
-        'features': featuresArray.slice(1, getRandomNumber(1, 5)),
-        'description': 'описание',
-        'photos': photosArray.slice(0, getRandomNumber(1, 5))
+        'title': offerTitle + i,
+        'adress': adressLocation,
+        'price': accomodationPrice,
+        'type': getRandomArrayElement(accomodation, 0, 4),
+        'rooms': getRandomNumber(1, 4),
+        'guests': getRandomNumber(1, 6),
+        'checkin': getRandomArrayElement(checkinTimes, 0, 3),
+        'checkout': getRandomArrayElement(checkoutTimes, 0, 3),
+        'features': sliceArrayRandom(featuresArray),
+        'description': accomodationDescription,
+        'photos': sliceArrayRandom(photosArray),
       },
 
       'location': {
         'x': getRandomNumber(150, 800),
         'y': getRandomNumber(130, 630),
       }
-    }
+    };
     accomodationData.push(incomeObject);
   }
-
-  return accomodationData
-}
+  return accomodationData;
+};
 
 var allAccomodations = getAccomodationData();
 

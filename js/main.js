@@ -19,7 +19,7 @@ var OFFER_TITLE = 'offer heading 0';
 var ADDRESS_LOCATION = {'x': 600, 'y': 350};
 
 var getRandomNumber = function (minNumber, maxNumber) {
-  return Math.floor(minNumber + Math.random() * (maxNumber + 1 - minNumber));
+  return Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber; // формула Из документации Mozilla Developer Network
 };
 
 var getRandomElementFromArray = function (arr) {
@@ -34,14 +34,18 @@ var getWidthElement = function (element) {
   return element.getBoundingClientRect().width;
 };
 
+var getHeightElement = function (element) {
+  return element.getBoundingClientRect().height;
+};
+
 var removeClass = function (element, classElement) {
   element.classList.remove(classElement);
 };
 
-var getAccommodationParams = function () {
-  var accommodationParams = [];
+var getAccomodationData = function () {
+  var accommodationData = [];
   for (var i = 1; i <= 8; i++) {
-    var incomeObject = {
+    var accommodationOptions = {
       author: {
         'avatar': 'img/avatars/user0' + i + '.png'
       },
@@ -65,12 +69,12 @@ var getAccommodationParams = function () {
         y: getRandomNumber(130, 630),
       }
     };
-    accommodationParams.push(incomeObject);
+    accommodationData.push(accommodationOptions);
   }
-  return accommodationParams;
+  return accommodationData;
 };
 
-var allAccommodations = getAccommodationParams();
+var allAccommodations = getAccomodationData();
 
 var createButton = function (type, className, x, y) {
   var button = document.createElement('button');
@@ -99,8 +103,8 @@ var drawPins = function (arr) {
     var mapPin = createButton(
         'button',
         'map__pin',
-        arr[i].location.x - 25, // решил добавить сюда координаты, на которые указывает метка своим острым концом.
-        arr[i].location.y - 70 //  решил добавить сюда координаты, на которые указывает метка своим острым концом.
+        arr[i].location.x,
+        arr[i].location.y
     );
 
     var mapPinImg = createImg(
@@ -118,3 +122,16 @@ var drawPins = function (arr) {
 };
 
 drawPins(allAccommodations);
+
+var mapPinCollection = document.querySelectorAll('.map__pin'); // нашел коллекцию которая отрисовалась !!!!!!!!!!!!!!!!
+
+var pinLocations = function (PinCollection) { // перемещение пина острым концом в приходящую координату !!!!!!!!!!
+  for (var i = 1; i <= PinCollection.length - 1; i++) {
+    var pin = PinCollection[i];
+    pin.style.left = parseInt(pin.style.left, 10) - getWidthElement(pin) / 2 + 'px';
+    pin.style.top = parseInt(pin.style.top, 10) - getHeightElement(pin) + 'px';
+  }
+};
+
+pinLocations(mapPinCollection);
+

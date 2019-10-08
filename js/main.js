@@ -17,9 +17,11 @@ var ACCOMMODATION_PRICE = 400;
 var ACCOMMODATION_DESCRIPTION = 'описание';
 var OFFER_TITLE = 'offer heading 0';
 var ADDRESS_LOCATION = {'x': 600, 'y': 350};
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
 
 var getRandomNumber = function (minNumber, maxNumber) {
-  return Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber; // формула Из документации Mozilla Developer Network
+  return Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
 };
 
 var getRandomElementFromArray = function (arr) {
@@ -32,10 +34,6 @@ var sliceArrayRandom = function (arr) {
 
 var getWidthElement = function (element) {
   return element.getBoundingClientRect().width;
-};
-
-var getHeightElement = function (element) {
-  return element.getBoundingClientRect().height;
 };
 
 var removeClass = function (element, classElement) {
@@ -80,8 +78,8 @@ var createButton = function (type, className, x, y) {
   var button = document.createElement('button');
   button.type = type;
   button.className = className;
-  button.style.left = x + 'px';
-  button.style.top = y + 'px';
+  button.style.left = x - (PIN_WIDTH / 2) + 'px';
+  button.style.top = y - (PIN_HEIGHT) + 'px';
   return button;
 };
 
@@ -120,18 +118,4 @@ var drawPins = function (arr) {
 
   mapPins.appendChild(fragment);
 };
-
 drawPins(allAccommodations);
-
-var mapPinCollection = document.querySelectorAll('.map__pin'); // нашел коллекцию которая отрисовалась !!!!!!!!!!!!!!!!
-
-var pinLocations = function (PinCollection) { // перемещение пина острым концом в приходящую координату !!!!!!!!!!
-  for (var i = 1; i <= PinCollection.length - 1; i++) {
-    var pin = PinCollection[i];
-    pin.style.left = parseInt(pin.style.left, 10) - getWidthElement(pin) / 2 + 'px';
-    pin.style.top = parseInt(pin.style.top, 10) - getHeightElement(pin) + 'px';
-  }
-};
-
-pinLocations(mapPinCollection);
-

@@ -1,7 +1,13 @@
 'use strict';
 
 var map = document.querySelector('.map');
+var mapPinMain = document.querySelector('.map__pin--main');
 var mapPins = document.querySelector('.map__pins');
+var mapCheckboxes = document.querySelectorAll('.map__checkbox'); // чекбоксы карты
+var mapFilters = document.querySelectorAll('.map__filter'); // селекты карты
+var addFormFields = document.querySelectorAll('.ad-form fieldset'); // инпуты в подаче обьявления
+var noticeAddressField = document.querySelector('#address'); // адрес координаты
+var addForm = document.querySelector('.ad-form'); // форма добавления обьявления
 
 var ACCOMMODATION = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN_TIMES = ['12:00', '13:00', '14:00'];
@@ -92,8 +98,6 @@ var createImg = function (src, title, width, height) {
   return img;
 };
 
-removeClass(map, 'map--faded');
-
 var drawPins = function (arr) {
   var fragment = document.createDocumentFragment();
 
@@ -118,4 +122,104 @@ var drawPins = function (arr) {
 
   mapPins.appendChild(fragment);
 };
-drawPins(allAccommodations);
+
+
+// следующее задание
+var setAttributeForCollection = function (collections, attribute, value) { // задает атрибут для коллекции
+
+  for (var i = 0; i <= collections.length - 1; i++) {
+    var collectionElement = collections[i];
+    collectionElement.setAttribute(attribute, value);
+  }
+};
+
+var removeAttributeForCollection = function (collections, attribute, value) { // убирает атрибут из коллекции
+
+  for (var i = 0; i <= collections.length - 1; i++) {
+    var collectionElement = collections[i];
+    collectionElement.removeAttribute(attribute, value);
+  }
+};
+
+var disabledMap = function () { // фунция деактивирует инпуты (по умолчанию)
+  setAttributeForCollection(mapCheckboxes, 'disabled', ''); // деактивируем чекбоксы на карте
+  setAttributeForCollection(mapFilters, 'disabled', ''); // деактивируем селекты на карте
+  setAttributeForCollection(addFormFields, 'disabled', ''); // деактивируем размещение обьявления
+};
+
+disabledMap();
+
+var activateMap = function () { // функция активирует карту
+  removeClass(map, 'map--faded');
+  removeClass(addForm, 'ad-form--disabled');
+  removeAttributeForCollection(mapCheckboxes, 'disabled', ''); // активируем чекбоксы на карте
+  removeAttributeForCollection(mapFilters, 'disabled', ''); // активируем селекты на карте
+  removeAttributeForCollection(addFormFields, 'disabled', ''); // активируем размещение обьявления
+  drawPins(allAccommodations);
+};
+
+var fillAddressField = function (element) { // добавляет координаты острого конца метки в поле адреса
+  var positionX = parseInt(element.style.left, 10) - Math.round(parseInt(element.offsetWidth, 10) / 2);
+  var positionY = parseInt(element.style.top, 10) - (parseInt(element.offsetHeight, 10));
+  noticeAddressField.value = positionX + ',' + positionY;
+};
+
+mapPinMain.addEventListener('mousedown', function () { // клац мышью и карта активирована
+  activateMap();
+  fillAddressField(mapPinMain);
+});
+
+mapPinMain.addEventListener('keydown', function (evt) { // клац по ентеру и карта активирована
+  if (evt.keyCode === 13) {
+    activateMap();
+    fillAddressField(mapPinMain);
+  }
+});
+
+// валидация форм
+
+var addFormTitle = document.querySelector('#title');
+addFormTitle.addEventListener('invalid', function () { // валидация тайтла добавления обьявления
+  if (addFormTitle.validity.tooShort) {
+    addFormTitle.setCustomValidity('Описание не должно быть короче 30 символов');
+  } else if (addFormTitle.validity.tooLong) {
+    addFormTitle.setCustomValidity('Описание не должно быть длиннее 100 символов');
+  } else if (addFormTitle.validity.valueMissing) {
+    addFormTitle.setCustomValidity('Друг, заполни поле');
+  }
+});
+
+var addFormType = document.querySelector('#type');
+var addFormPrice = document.querySelector('#price');
+
+
+addFormType.addEventListener('change', function () { // синхронизация тип обьекта и цена
+  if (addFormType.value === 'bungalo') {
+    addFormPrice.min = 0;
+    addFormPrice.placeholder = 0;
+  } else if (addFormType.value === 'flat') {
+    addFormPrice.min = 1000;
+    addFormPrice.placeholder = 1000;
+  } else if (addFormType.value === 'house') {
+    addFormPrice.min = 5000;
+    addFormPrice.placeholder = 5000;
+  } else if (addFormType.value === 'palace') {
+    addFormPrice.min = 10000;
+    addFormPrice.placeholder = 10000;
+  }
+});
+
+
+addFormPrice.addEventListener('invalid', function () {
+  if (addFormPrice.min < 0) {
+    addFormPrice.setCustomValidity('бунгало');
+
+  } else if (addFormPrice.min === 1000) {
+    addFormPrice.setCustomValidity('квартира');
+  } else if (addFormPrice.min === 5000) {
+    addFormPrice.setCustomValidity('дом');
+  } else if (addFormPrice.min === 10000) {
+    addFormPrice.setCustomValidity('дворец');
+  }
+});
+

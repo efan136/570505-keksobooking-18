@@ -3,6 +3,7 @@
 'use strict';
 
 (function () {
+  window.map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapPins = document.querySelector('.map__pins');
   var mapCheckboxes = document.querySelectorAll('.map__checkbox'); // чекбоксы карты
@@ -83,8 +84,12 @@
 
   disabledMap();
 
-  var onError = function (message) { // обработка ошибок сервера
-    console.error(message);
+  var mapPinMainClickHandler = function () { // активирует карту и заполняет поле адреса. используется в ф-и LOAD
+    activateMap();
+    fillAddressField(mapPinMain, MAP_PIN_MAIN_ARROW_HEIGHT);
+  };
+
+  var onError = function () { // обработка ошибок сервера
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorPopup = errorTemplate.cloneNode(true);
     var main = document.querySelector('main');
@@ -92,8 +97,8 @@
   };
 
   var onSuccess = function (data) { // ответ от сервера в случае успеха
-    console.log(data);
     SERVER_DATA = data;
+    mapPinMainClickHandler();
   };
 
   var activateMap = function () { // функция активирует карту, поля, рисует пины
@@ -114,16 +119,11 @@
 
   fillAddressField(mapPinMain, 0); // заполняет адрес в деативированом режиме(без острого конца)
 
-  window.mapPinMainClickHandler = function () { // активирует карту и заполняет поле адреса. используется в ф-и LOAD
-    activateMap();
-    fillAddressField(mapPinMain, MAP_PIN_MAIN_ARROW_HEIGHT);
-  };
-
   mapPinMain.addEventListener('mousedown', function () { // клац мышью и карта активирована
-    window.load(SERVER_URL, onSuccess, onError); //получение данных с сервера и отрисовка элементов
+    window.load(SERVER_URL, onSuccess, onError); // получение данных с сервера и отрисовка элементов
   });
 
   mapPinMain.addEventListener('keydown', function (ev) { // клац по ентеру и карта активирована
-    window.util.isEnterEvent(ev, window.load(SERVER_URL, onSuccess, onError))
+    window.util.isEnterEvent(ev, window.load(SERVER_URL, onSuccess, onError));
   });
 })();

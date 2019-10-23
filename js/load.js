@@ -11,7 +11,6 @@
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
         onSuccess(xhr.response);
-        mapPinMainClickHandler(); // отрисовка пинов
       } else {
         onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
@@ -29,5 +28,5 @@
 
     xhr.open('GET', url);
     xhr.send();
-  }
+  };
 })();

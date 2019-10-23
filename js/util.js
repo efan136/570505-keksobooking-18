@@ -5,7 +5,7 @@
   window.util = {
     isEnterEvent: function (evt, action) {
       if (evt.keyCode === ENTER_KEYCODE) {
-        action;
+        action();
       }
     },
 

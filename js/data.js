@@ -50,6 +50,4 @@
     }
     return accommodationData;
   };
-
-  window.accommodationData = getAccomodationData();
 })();

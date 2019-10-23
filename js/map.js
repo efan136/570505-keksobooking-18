@@ -3,6 +3,7 @@
 'use strict';
 
 (function () {
+  window.map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapPins = document.querySelector('.map__pins');
   var mapCheckboxes = document.querySelectorAll('.map__checkbox'); // чекбоксы карты
@@ -13,6 +14,8 @@
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
   var MAP_PIN_MAIN_ARROW_HEIGHT = 22;
+  var SERVER_URL = 'https://js.dump.academy/keksobooking/data';
+  var SERVER_DATA = ''; // массив полученый с сервера
 
   var createButton = function (type, className, x, y) { // создание кнопки пина
     var button = document.createElement('button');
@@ -81,14 +84,31 @@
 
   disabledMap();
 
-  var activateMap = function () { // функция активирует карту и поля
+  var mapPinMainClickHandler = function () { // активирует карту и заполняет поле адреса. используется в ф-и LOAD
+    activateMap();
+    fillAddressField(mapPinMain, MAP_PIN_MAIN_ARROW_HEIGHT);
+  };
+
+  var onError = function () { // обработка ошибок сервера
+    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+    var errorPopup = errorTemplate.cloneNode(true);
+    var main = document.querySelector('main');
+    main.appendChild(errorPopup);
+  };
+
+  var onSuccess = function (data) { // ответ от сервера в случае успеха
+    SERVER_DATA = data;
+    mapPinMainClickHandler();
+  };
+
+  var activateMap = function () { // функция активирует карту, поля, рисует пины
+
     window.util.removeClass(window.map, 'map--faded');
     window.util.removeClass(addForm, 'ad-form--disabled');
     removeAttributeForCollection(mapCheckboxes, 'disabled', ''); // активируем чекбоксы на карте
     removeAttributeForCollection(mapFilters, 'disabled', ''); // активируем селекты на карте
     removeAttributeForCollection(addFormFields, 'disabled', ''); // активируем размещение обьявления
-    var allAccommodations = window.accommodationData;
-    drawPins(allAccommodations);
+    drawPins(SERVER_DATA);
   };
 
   var fillAddressField = function (element, elementArrowHeight) { // добавляет координаты острого конца метки в поле адреса
@@ -99,16 +119,11 @@
 
   fillAddressField(mapPinMain, 0); // заполняет адрес в деативированом режиме(без острого конца)
 
-  var mapPinMainClickHandler = function () { // активирует карту и заполняет поле адреса
-    activateMap();
-    fillAddressField(mapPinMain, MAP_PIN_MAIN_ARROW_HEIGHT);
-  };
-
   mapPinMain.addEventListener('mousedown', function () { // клац мышью и карта активирована
-    mapPinMainClickHandler();
+    window.load(SERVER_URL, onSuccess, onError); // получение данных с сервера и отрисовка элементов
   });
 
   mapPinMain.addEventListener('keydown', function (ev) { // клац по ентеру и карта активирована
-    window.util.isEnterEvent(ev, mapPinMainClickHandler);
+    window.util.isEnterEvent(ev, window.load(SERVER_URL, onSuccess, onError));
   });
 })();

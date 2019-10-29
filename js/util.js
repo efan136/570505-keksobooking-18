@@ -27,6 +27,20 @@
 
     removeClass: function (element, classElement) {
       element.classList.remove(classElement);
-    }
+    },
+
+    setAttributeForCollection: function (collections, attribute, value) { // задает атрибут для коллекции (деактивация полей)
+      for (var i = 0; i <= collections.length - 1; i++) {
+        var collectionElement = collections[i];
+        collectionElement.setAttribute(attribute, value);
+      }
+    },
+    removeAttributeForCollection: function (collections, attribute, value) { // убирает атрибут из коллекции (активация полей )
+      for (var i = 0; i <= collections.length - 1; i++) {
+        var collectionElement = collections[i];
+        collectionElement.removeAttribute(attribute, value);
+      }
+    },
+
   };
 })();

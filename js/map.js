@@ -11,6 +11,7 @@
   var addFormFields = document.querySelectorAll('.ad-form fieldset'); // инпуты в подаче обьявления
   var noticeAddressField = document.querySelector('#address'); // адрес координаты
   var addForm = document.querySelector('.ad-form'); // форма добавления обьявления
+  var mapPin = document.querySelector('.map__pin');
 
   var MAP_PIN_MAIN_ARROW_HEIGHT = 22;
   var SERVER_URL = 'https://js.dump.academy/keksobooking/data';
@@ -55,10 +56,16 @@
   fillAddressField(mapPinMain, 0); // заполняет адрес в деативированом режиме(без острого конца)
 
   mapPinMain.addEventListener('mousedown', function () { // клац мышью и карта активирована
+
     window.load(SERVER_URL, onSuccess, onError); // получение данных с сервера и отрисовка элементов
   });
 
   mapPinMain.addEventListener('keydown', function (ev) { // клац по ентеру и карта активирована
     window.util.isEnterEvent(ev, window.load(SERVER_URL, onSuccess, onError));
+  });
+
+  mapPin.addEventListener('click', function () {
+
+    setTimeout(window.createCard, 1000); // ВРЕМЕННОЕ РЕШЕНИЕ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   });
 })();

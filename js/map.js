@@ -11,7 +11,7 @@
   var addFormFields = document.querySelectorAll('.ad-form fieldset'); // инпуты в подаче обьявления
   var noticeAddressField = document.querySelector('#address'); // адрес координаты
   var addForm = document.querySelector('.ad-form'); // форма добавления обьявления
-  var mapPin = document.querySelector('.map__pin');
+  var ENTER_KEYCODE = 13;
 
   var MAP_PIN_MAIN_ARROW_HEIGHT = 22;
   var SERVER_URL = 'https://js.dump.academy/keksobooking/data';
@@ -45,6 +45,7 @@
     window.util.removeAttributeForCollection(mapFilters, 'disabled', ''); // активируем селекты на карте
     window.util.removeAttributeForCollection(addFormFields, 'disabled', ''); // активируем размещение обьявления
     window.drawPins(window.SERVER_DATA);
+    window.filtredData = window.SERVER_DATA;
   };
 
   var fillAddressField = function (element, elementArrowHeight) { // добавляет координаты острого конца метки в поле адреса
@@ -55,17 +56,39 @@
 
   fillAddressField(mapPinMain, 0); // заполняет адрес в деативированом режиме(без острого конца)
 
-  mapPinMain.addEventListener('mousedown', function () { // клац мышью и карта активирована
+  var onMapPinMainEnterPress = function (ev) { //
+    if (ev.keyCode === ENTER_KEYCODE) {
+      drawLoadData();
+      mapPinMain.removeEventListener('keydown', onMapPinMainEnterPress);
+    }
+  };
 
-    window.load(SERVER_URL, onSuccess, onError); // получение данных с сервера и отрисовка элементов
-  });
+  var drawLoadData = function () { //
+    window.load(SERVER_URL, onSuccess, onError);
+    mapPinMain.removeEventListener('mousedown', drawLoadData);
+  };
 
-  mapPinMain.addEventListener('keydown', function (ev) { // клац по ентеру и карта активирована
-    window.util.isEnterEvent(ev, window.load(SERVER_URL, onSuccess, onError));
-  });
+  mapPinMain.addEventListener('mousedown', drawLoadData); // клик мышью по главному пину отрисовка пинов на карте
 
-  mapPin.addEventListener('click', function () {
+  mapPinMain.addEventListener('keydown', onMapPinMainEnterPress); // нажатие кнопкой на главный пин и отрисовка пинов на карте
 
-    setTimeout(window.createCard, 1000); // ВРЕМЕННОЕ РЕШЕНИЕ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  var createPinCard = function (ev) { // отлов события для отрисовки карты по нажатию на пин
+    var target = ev.target;
+    var mapPinImages = document.querySelectorAll('.map__pin img');
+    var mapPinButtons = document.querySelectorAll('.map__pin');
+    for (var i = 1; i <= mapPinButtons.length; i++) {
+      if (target === mapPinImages[i] || target === mapPinButtons[i]) {
+        var index = i - 1;
+        window.createCard(window.filtredData, index);
+      }
+    }
+  };
+
+  window.mapPins.addEventListener('click', createPinCard);
+
+  window.mapPins.addEventListener('keydown', function (ev) {
+    if (ev.keyCode === ENTER_KEYCODE) {
+      createPinCard();
+    }
   });
 })();

@@ -12,20 +12,20 @@
     };
     removePins();
 
-    var filtredData = window.SERVER_DATA.filter(function (SERVER_DAT) {
+    window.filtredData = window.SERVER_DATA.filter(function (it) {
       if (houseType.value === 'house') {
-        return SERVER_DAT.offer.type === 'house';
+        return it.offer.type === 'house';
       } else if (houseType.value === 'flat') {
-        return SERVER_DAT.offer.type === 'flat';
+        return it.offer.type === 'flat';
       } else if (houseType.value === 'palace') {
-        return SERVER_DAT.offer.type === 'palace';
+        return it.offer.type === 'palace';
       } else if (houseType.value === 'bungalo') {
-        return SERVER_DAT.offer.type === 'bungalo';
+        return it.offer.type === 'bungalo';
       } else {
         return window.SERVER_DATA;
       }
     });
-    window.drawPins(filtredData);
+    window.drawPins(window.filtredData);
   });
 
 })();

@@ -12,6 +12,7 @@
     button.className = className;
     button.style.left = x - (PIN_WIDTH / 2) + 'px';
     button.style.top = y - (PIN_HEIGHT) + 'px';
+    // button.tabIndex = '-1';
     return button;
   };
 
@@ -21,14 +22,15 @@
     img.alt = title;
     img.width = String(width);
     img.height = String(height);
+    // img.tabIndex = '0';
     return img;
   };
 
   window.drawPins = function (arr) { // отрисовка пина
-    arr = arr.slice(0, pinQuantity);
+    var slicedArr = arr.slice(0, pinQuantity);
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i <= arr.length - 1; i++) {
+    for (var i = 0; i <= slicedArr.length - 1; i++) {
       var mapPin = createButton(
           'button',
           'map__pin',

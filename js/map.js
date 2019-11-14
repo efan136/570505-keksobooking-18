@@ -17,6 +17,28 @@
   var SERVER_URL = 'https://js.dump.academy/keksobooking/data';
   window.SERVER_DATA = []; // массив полученый с сервера
 
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var mapBorderRight = window.mapPins.offsetWidth - mapPinMain.offsetWidth;
+  var mapBorderLeft = 0;
+  var mapBorderTop = 0;
+  var mapBorderBottom = window.mapPins.offsetHeight - mapFiltersContainer.offsetHeight - MAP_PIN_MAIN_ARROW_HEIGHT;
+
+  var setLimitX = function () { // задает лимит перемещения по карте главно метки по оси ИКС
+    if (mapPinMain.offsetLeft >= mapBorderRight) {
+      mapPinMain.style.left = mapBorderRight + 'px';
+    } else if (mapPinMain.offsetLeft <= mapBorderLeft) {
+      mapPinMain.style.left = mapBorderLeft + 'px';
+    }
+  };
+
+  var setLimitY = function () { // задает лимит перемещения по карте главно метки по оси ИГРИК
+    if (mapPinMain.offsetTop <= mapBorderTop) {
+      mapPinMain.style.top = mapBorderTop + 'px';
+    } else if (mapPinMain.offsetTop >= mapBorderBottom) {
+      mapPinMain.style.top = mapBorderBottom + 'px';
+    }
+  };
+
   var disabledMap = function () { // фунция деактивирует инпуты (по умолчанию)
     window.util.setAttributeForCollection(mapCheckboxes, 'disabled', ''); // деактивируем чекбоксы на карте
     window.util.setAttributeForCollection(mapFilters, 'disabled', ''); // деактивируем селекты на карте
@@ -90,5 +112,43 @@
     if (ev.keyCode === ENTER_KEYCODE) {
       createPinCard();
     }
+  });
+
+  // передвижение главной метки по карте
+
+  mapPinMain.addEventListener('mousedown', function (ev) { // подписался на маусдаун
+    var startCoords = {
+      x: ev.clientX,
+      y: ev.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      fillAddressField(mapPinMain, MAP_PIN_MAIN_ARROW_HEIGHT);
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      mapPinMain.style.top = mapPinMain.offsetTop - shift.y + 'px';
+      mapPinMain.style.left = mapPinMain.offsetLeft - shift.x + 'px';
+
+      setLimitY();
+      setLimitX();
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mosueup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove); // создал обработчик при движении мыши
+    document.addEventListener('mouseup', onMouseUp); // создал обработчик при отпскании кнопки мыши
   });
 })();

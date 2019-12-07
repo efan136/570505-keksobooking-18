@@ -1,10 +1,9 @@
 'use strict';
 
 (function () {
-  var ENTER_KEYCODE = 13;
   window.util = {
     isEnterEvent: function (evt, action) {
-      if (evt.keyCode === ENTER_KEYCODE) {
+      if (evt.keyCode === window.ENTER_KEYCODE) {
         action();
       }
     },
@@ -29,10 +28,15 @@
       element.classList.remove(classElement);
     },
 
+    addClass: function (element, classElement) {
+      element.classList.add(classElement);
+    },
+
     setAttributeForCollection: function (collections, attribute, value) { // задает атрибут для коллекции (деактивация полей)
       for (var i = 0; i <= collections.length - 1; i++) {
         var collectionElement = collections[i];
         collectionElement.setAttribute(attribute, value);
+
       }
     },
     removeAttributeForCollection: function (collections, attribute, value) { // убирает атрибут из коллекции (активация полей )
@@ -44,6 +48,13 @@
     removeElementsForCollection: function (container, collection) {
       for (var i = 0; i <= collection.length - 1; i++) {
         container.removeChild(collection[i]); // удаляет ненужный тэг из шаблона
+      }
+    },
+
+    removePins: function () {
+      var mapPinElements = document.querySelectorAll('.map__pin'); // поиск отрисованых пинов
+      for (var i = mapPinElements.length - 1; i >= 1; i--) { // иду по отрисованым пинам и удаляю их
+        window.mapPins.removeChild(mapPinElements[i]); // удаляю пины
       }
     }
   };

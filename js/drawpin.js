@@ -5,7 +5,6 @@
   var PIN_HEIGHT = 70;
   var pinQuantity = 5;
 
-
   var createButton = function (type, className, x, y) { // создание кнопки пина
     var button = document.createElement('button');
     button.type = type;

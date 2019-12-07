@@ -3,14 +3,7 @@
 
   var houseType = document.querySelector('#housing-type'); // поиск поля тип фильтра
   houseType.addEventListener('change', function () { // отлов события
-
-    var removePins = function () {
-      var mapPinElements = document.querySelectorAll('.map__pin'); // поиск отрисованых пинов
-      for (var i = mapPinElements.length - 1; i >= 1; i--) { // иду по отрисованым пинам и удаляю их
-        window.mapPins.removeChild(mapPinElements[i]); // удаляю пины
-      }
-    };
-    removePins();
+    window.util.removePins();
 
     window.filtredData = window.SERVER_DATA.filter(function (it) {
       if (houseType.value === 'house') {

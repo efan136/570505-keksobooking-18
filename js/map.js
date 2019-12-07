@@ -3,20 +3,22 @@
 'use strict';
 
 (function () {
+  window.main = document.querySelector('main');
   window.map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
+  var mapPinMainStartX = 570; // начальное положение главного пина
+  var mapPinMainStartY = 375; // начальное положение главного пина
+  var MAP_PIN_MAIN_ARROW_HEIGHT = 22;
   window.mapPins = document.querySelector('.map__pins');
   var mapCheckboxes = document.querySelectorAll('.map__checkbox'); // чекбоксы карты
-  var mapFilters = document.querySelectorAll('.map__filter'); // селекты карты
   var addFormFields = document.querySelectorAll('.ad-form fieldset'); // инпуты в подаче обьявления
   var noticeAddressField = document.querySelector('#address'); // адрес координаты
-  var addForm = document.querySelector('.ad-form'); // форма добавления обьявления
-  var ENTER_KEYCODE = 13;
-
-  var MAP_PIN_MAIN_ARROW_HEIGHT = 22;
+  window.addForm = document.querySelector('.ad-form'); // форма добавления обьявления
+  var mapFilter = document.querySelector('.map__filters'); // ФОРМА ПОДАЧИ ОБЬЯВЛЕНИЯ
+  window.ENTER_KEYCODE = 13;
+  window.ESC_KEYCODE = 27;
   var SERVER_URL = 'https://js.dump.academy/keksobooking/data';
   window.SERVER_DATA = []; // массив полученый с сервера
-
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var mapBorderRight = window.mapPins.offsetWidth - mapPinMain.offsetWidth;
   var mapBorderLeft = 0;
@@ -41,7 +43,7 @@
 
   var disabledMap = function () { // фунция деактивирует инпуты (по умолчанию)
     window.util.setAttributeForCollection(mapCheckboxes, 'disabled', ''); // деактивируем чекбоксы на карте
-    window.util.setAttributeForCollection(mapFilters, 'disabled', ''); // деактивируем селекты на карте
+    window.util.setAttributeForCollection(mapFilter, 'disabled', ''); // деактивируем селекты на карте
     window.util.setAttributeForCollection(addFormFields, 'disabled', ''); // деактивируем размещение обьявления
   };
 
@@ -50,8 +52,7 @@
   var onError = function () { // обработка ошибок сервера
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorPopup = errorTemplate.cloneNode(true);
-    var main = document.querySelector('main');
-    main.appendChild(errorPopup);
+    window.main.appendChild(errorPopup);
   };
 
   var onSuccess = function (data) { // ответ от сервера в случае успеха
@@ -62,24 +63,45 @@
 
   var activateMap = function () { // функция активирует карту, поля, рисует пины
     window.util.removeClass(window.map, 'map--faded');
-    window.util.removeClass(addForm, 'ad-form--disabled');
+    window.util.removeClass(window.addForm, 'ad-form--disabled');
     window.util.removeAttributeForCollection(mapCheckboxes, 'disabled', ''); // активируем чекбоксы на карте
-    window.util.removeAttributeForCollection(mapFilters, 'disabled', ''); // активируем селекты на карте
+    window.util.removeAttributeForCollection(mapFilter, 'disabled', ''); // активируем селекты на карте
     window.util.removeAttributeForCollection(addFormFields, 'disabled', ''); // активируем размещение обьявления
     window.drawPins(window.SERVER_DATA);
     window.filtredData = window.SERVER_DATA;
   };
 
-  var fillAddressField = function (element, elementArrowHeight) { // добавляет координаты острого конца метки в поле адреса
+  var mapPinMainStartPosition = function () { // стартовые координаты главного пина X Y + заполнение пля адрес
+    mapPinMain.style.left = mapPinMainStartX + 'px';
+    mapPinMain.style.top = mapPinMainStartY + 'px';
+    noticeAddressField.value = mapPinMainStartX + (parseInt(mapPinMain.offsetWidth, 10) / 2) + ',' + (mapPinMainStartY + (parseInt(mapPinMain.offsetHeight, 10) / 2));
+  };
+
+  window.deActivateMap = function () { // функция ДЕактивирует карту, поля, удаляет пины
+    window.util.addClass(window.map, 'map--faded'); // скрыл карту
+    window.util.addClass(window.addForm, 'ad-form--disabled'); // задезэйблил форму
+    window.util.setAttributeForCollection(addFormFields, 'disabled', ''); // деактивируем размещение обьявления
+    window.util.removePins(); // удаляем пины
+    window.addForm.reset();
+    mapFilter.reset();
+    mapPinMainStartPosition(); // врнул главный пин в центр карты
+    window.closeCard(); // закрыл карточку обьявления
+  };
+
+  var fillAddressField = function (element, elementArrowHeight) { // добавляет координаты в поле адреса. если карта не активна то берется координата центра если активна то координата указателя пина
     var positionX = parseInt(element.style.left, 10) + Math.round(parseInt(element.offsetWidth, 10) / 2);
-    var positionY = parseInt(element.style.top, 10) + (parseInt(element.offsetHeight, 10) + elementArrowHeight);
+    if (elementArrowHeight > 0) {
+      var positionY = parseInt(element.style.top, 10) + (parseInt(element.offsetHeight, 10) + elementArrowHeight);
+    } else {
+      positionY = parseInt(element.style.top, 10) + ((parseInt(element.offsetHeight, 10) / 2) + elementArrowHeight);
+    }
     noticeAddressField.value = positionX + ',' + positionY;
   };
 
   fillAddressField(mapPinMain, 0); // заполняет адрес в деативированом режиме(без острого конца)
 
   var onMapPinMainEnterPress = function (ev) { //
-    if (ev.keyCode === ENTER_KEYCODE) {
+    if (ev.keyCode === window.ENTER_KEYCODE) {
       drawLoadData();
       mapPinMain.removeEventListener('keydown', onMapPinMainEnterPress);
     }
@@ -91,7 +113,6 @@
   };
 
   mapPinMain.addEventListener('mousedown', drawLoadData); // клик мышью по главному пину отрисовка пинов на карте
-
   mapPinMain.addEventListener('keydown', onMapPinMainEnterPress); // нажатие кнопкой на главный пин и отрисовка пинов на карте
 
   var createPinCard = function (ev) { // отлов события для отрисовки карты по нажатию на пин
@@ -109,7 +130,7 @@
   window.mapPins.addEventListener('click', createPinCard);
 
   window.mapPins.addEventListener('keydown', function (ev) {
-    if (ev.keyCode === ENTER_KEYCODE) {
+    if (ev.keyCode === window.ENTER_KEYCODE) {
       createPinCard();
     }
   });

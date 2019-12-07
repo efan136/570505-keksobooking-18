@@ -5,9 +5,11 @@
 
   var filterContainer = document.querySelector('.map__filters-container');
 
-  var closeCard = function () {
+  window.closeCard = function () {
     var pinCard = document.querySelector('.popup');
-    window.map.removeChild(pinCard);
+    if (pinCard) {
+      window.map.removeChild(pinCard);
+    }
   };
 
   window.createCard = function (arr, index) {
@@ -65,14 +67,13 @@
 
     var closePopupBtn = document.querySelector('.popup__close');
     closePopupBtn.addEventListener('click', function () {
-      closeCard();
+      window.closeCard();
     });
 
     window.addEventListener('keydown', function (ev) {
-      if (ev.keyCode === 27) {
-        closeCard();
+      if (ev.keyCode === window.ESC_KEYCODE) {
+        window.closeCard();
       }
-
     });
   };
 })();

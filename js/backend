@@ -1,0 +1,63 @@
+'use strict';
+
+function(){
+
+var onSuccessSend = function () {
+    window.deActivateMap();
+    var successTemplate = document.querySelector('#success').content.querySelector('.success');
+    var successFormMessage = successTemplate.cloneNode(true);
+    window.main.appendChild(successFormMessage);
+
+    var removeSuccessFormMessage = function () {
+      window.main.removeChild(successFormMessage);
+    };
+
+    document.addEventListener('click', function () {
+      removeSuccessFormMessage();
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.keyCode === window.ESC_KEYCODE) {
+        removeSuccessFormMessage();
+      }
+    });
+  };
+
+  var onErrorSend = function () {
+    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+    var errorFormMessage = errorTemplate.cloneNode(true);
+    window.main.appendChild(errorFormMessage);
+
+    var removeErrorFormMessage = function () {
+      window.main.removeChild(errorFormMessage);
+    };
+
+    var errorMessageBtn = document.querySelector('.error__button');
+
+    errorMessageBtn.addEventListener('keydown', function (ev) {
+      if (ev.keyCode === window.ESC_KEYCODE) {
+        removeErrorFormMessage();
+      }
+    });
+
+    errorMessageBtn.addEventListener('mouseup', function () {
+      removeErrorFormMessage();
+    });
+
+    document.addEventListener('click', function () {
+      removeErrorFormMessage();
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.keyCode === window.ESC_KEYCODE) {
+        removeErrorFormMessage();
+      }
+    });
+  };
+
+  window.addForm.addEventListener('submit', function (evt) {
+    window.upload(new FormData(window.addForm), onSuccessSend, onErrorSend);
+    evt.preventDefault();
+  });
+
+  }()
